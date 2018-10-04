@@ -8,91 +8,50 @@ namespace MoneySmart.API.Services
 {
     public class SavingsRepository
     {
-        private List<SavingAccountDto> _repository;
+        private SavingsDataStore _context;
         public SavingsRepository()
         {
-            _repository = GetRepository();
+            _context = SavingsDataStore.Current;
+        }
+
+        public List<SavingAccountWithoutTransactionsDto> GetSavingAccountsWithoutTransactions()
+        {
+            var savingAccounts = _context.Savings.Select(s => new SavingAccountWithoutTransactionsDto()
+            {
+                Id = s.Id,
+                Name = s.Name,
+                Description = s.Description,                
+                IsPrimary = s.IsPrimary,
+                OnHold = s.OnHold,
+                Percentage = s.Percentage,
+                TotalSavings = s.Transactions.Sum(t => t.Amount)
+            }).ToList();
+                        
+
+            return savingAccounts;
+        }
+
+        public double GetTotalSavings()
+        {
+            var total = GetSavingAccountsWithoutTransactions().Sum(s => s.TotalSavings);
+
+            return total;
+        }
+
+        public SavingAccountDto GetSavingAccount(int accountId)
+        {
+            var savingAccount = _context.Savings.FirstOrDefault(s => s.Id == accountId);
+
+            return savingAccount;
         }
 
         public List<SavingAccountDto> GetSavingAccounts()
         {
-            return GetRepository();
+            var savingAccounts = _context.Savings;
+
+            return savingAccounts;
         }
 
-        #region PrivateRepo-ToBe Updated
-        private List<SavingAccountDto> GetRepository()
-        {
-            return new List<SavingAccountDto>()
-                    {
-                        new SavingAccountDto()
-                        {
-                            Id = 101,
-                            Name = "Primary Savings",
-                            Description = "Primary Savings",
-                            Percentage = 13,
-                            IsPrimary = true,
-                            OnHold = false,
-                            Transactions = new List<TransactionDto>()
-                            {
-                                new TransactionDto()
-                                {
-                                    Id = 1001,
-                                    Amount = 100,
-                                    TransactionType = 0,
-                                    CreatedDateTime = DateTime.Now
-                                },
-                                new TransactionDto()
-                                {
-                                    Id = 1002,
-                                    Amount = 500,
-                                    TransactionType = 1,
-                                    CreatedDateTime = DateTime.Now
-                                },
-                                new TransactionDto()
-                                {
-                                    Id = 1003,
-                                    Amount = 200,
-                                    TransactionType = 1,
-                                    CreatedDateTime = DateTime.Now
-                                }
-                            }
-                        },
-                        new SavingAccountDto()
-                        {
-                            Id = 101,
-                            Name = "House",
-                            Description = "",
-                            Percentage = 39,
-                            IsPrimary = true,
-                            OnHold = false,
-                            Transactions = new List<TransactionDto>()
-                            {
-                                new TransactionDto()
-                                {
-                                    Id = 1001,
-                                    Amount = 1100,
-                                    TransactionType = 0,
-                                    CreatedDateTime = DateTime.Now
-                                },
-                                new TransactionDto()
-                                {
-                                    Id = 1002,
-                                    Amount = 5100,
-                                    TransactionType = 1,
-                                    CreatedDateTime = DateTime.Now
-                                },
-                                new TransactionDto()
-                                {
-                                    Id = 1003,
-                                    Amount = 2100,
-                                    TransactionType = 1,
-                                    CreatedDateTime = DateTime.Now
-                                }
-                            }
-                        }
-                    };
-        }
-
-        #endregion
+        
     }
 }

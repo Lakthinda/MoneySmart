@@ -10,30 +10,43 @@ namespace MoneySmart.API.Controllers
     public class SavingsController : Controller
     {
 
-        //private SavingsRepository _repository;
-        //public SavingsController(SavingsRepository repository)
+        private SavingsRepository _repository;
+        public SavingsController(SavingsRepository repository)
+        {
+            _repository = repository;
+        }
+
+        //[HttpGet()]
+        //public IActionResult GetSavings()
         //{
-        //    _repository = repository;
+        //    var result = 1000;
+        //    return Ok(result);
         //}
 
         [HttpGet()]
-        public IActionResult GetSavings()
+        public IActionResult GetSavingAccounts()
         {
-            var result = 1000;
+            var result = _repository.GetSavingAccountsWithoutTransactions();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetSavings(int id)
+        [HttpGet("total")]
+        public IActionResult GetTotalSavings()
         {
-            var result = (id==0)? 500 : id ;
+            var result = _repository.GetTotalSavings();
             return Ok(result);
         }
-        
+
+        [HttpGet("{accountId}")]
+        public IActionResult GetSavingAccount(int accountId)
+        {
+            var result = _repository.GetSavingAccount(accountId);
+            return Ok(result);
+        }        
+
         [HttpPost("{funds}")]
         public IActionResult AddFunds(double funds)
-        {
-            SavingsRepository _repository = new SavingsRepository();
+        {            
             var savingAccounts = _repository.GetSavingAccounts();
 
             foreach (var account in savingAccounts)
