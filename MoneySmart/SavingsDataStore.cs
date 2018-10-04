@@ -25,21 +25,24 @@ namespace MoneySmart.API
                                     Id = 1001,
                                     Amount = 100,
                                     TransactionType = 0,
-                                    CreatedDateTime = DateTime.Now
+                                    CreatedDateTime = DateTime.Now,
+                                    OriginalAmount = 500
                                 },
                                 new TransactionDto()
                                 {
                                     Id = 1002,
                                     Amount = 500,
                                     TransactionType = 1,
-                                    CreatedDateTime = DateTime.Now
+                                    CreatedDateTime = DateTime.Now,
+                                    OriginalAmount = 500
                                 },
                                 new TransactionDto()
                                 {
                                     Id = 1003,
                                     Amount = 200,
                                     TransactionType = 1,
-                                    CreatedDateTime = DateTime.Now
+                                    CreatedDateTime = DateTime.Now,
+                                    OriginalAmount = 200
                                 }
                             }
                         },
@@ -58,21 +61,24 @@ namespace MoneySmart.API
                                     Id = 1001,
                                     Amount = 1100,
                                     TransactionType = 0,
-                                    CreatedDateTime = DateTime.Now
+                                    CreatedDateTime = DateTime.Now,
+                                    OriginalAmount = 2000
                                 },
                                 new TransactionDto()
                                 {
                                     Id = 1002,
                                     Amount = 5100,
                                     TransactionType = 1,
-                                    CreatedDateTime = DateTime.Now
+                                    CreatedDateTime = DateTime.Now,
+                                    OriginalAmount = 5100
                                 },
                                 new TransactionDto()
                                 {
                                     Id = 1003,
                                     Amount = 2100,
                                     TransactionType = 1,
-                                    CreatedDateTime = DateTime.Now
+                                    CreatedDateTime = DateTime.Now,
+                                    OriginalAmount = 2100
                                 }
                             }
                         }
