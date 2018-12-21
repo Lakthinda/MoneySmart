@@ -10,8 +10,8 @@ namespace MoneySmart.API.Controllers
     public class SavingsController : Controller
     {
 
-        private SavingsRepository _repository;
-        public SavingsController(SavingsRepository repository)
+        private ISavingsRepository _repository;
+        public SavingsController(ISavingsRepository repository)
         {
             _repository = repository;
         }
@@ -49,16 +49,16 @@ namespace MoneySmart.API.Controllers
         {            
             var savingAccounts = _repository.GetSavingAccounts();
 
-            foreach (var account in savingAccounts)
-            {                
-                account.Transactions.Add(new TransactionDto()
-                {
-                    Id= 1201,
-                    Amount = (account.Percentage/100) * funds,
-                    TransactionType = 0,
-                    CreatedDateTime = DateTime.Now
-                });
-            }
+            //foreach (var account in savingAccounts)
+            //{                
+            //    account.Transactions.Add(new TransactionDto()
+            //    {
+            //        Id= 1201,
+            //        Amount = (account.Percentage/100) * funds,
+            //        TransactionType = 0,
+            //        CreatedDateTime = DateTime.Now
+            //    });
+            //}
 
             return Ok(savingAccounts);
         }
