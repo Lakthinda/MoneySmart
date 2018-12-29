@@ -16,13 +16,6 @@ namespace MoneySmart.API.Controllers
             _repository = repository;
         }
 
-        //[HttpGet()]
-        //public IActionResult GetSavings()
-        //{
-        //    var result = 1000;
-        //    return Ok(result);
-        //}
-
         [HttpGet()]
         public IActionResult GetSavingAccounts()
         {
