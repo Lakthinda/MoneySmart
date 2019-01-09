@@ -9,37 +9,16 @@ using System.Threading.Tasks;
 namespace MoneySmart.API.Services
 {
     public class SavingsRepository : ISavingsRepository
-    {
-        //private SavingsDataStore _context;
+    {        
         private MoneySmartDbContext _context;
         public SavingsRepository(MoneySmartDbContext context)
-        {
-            //_context = SavingsDataStore.Current;
+        {            
             _context = context;            
         }
-
-        //public List<SavingAccountWithoutTransactionsDto> GetSavingAccountsWithoutTransactions()
-        //{
-        //    var savingAccounts = _context.SavingAccounts.Select(s => new SavingAccountWithoutTransactionsDto()
-        //    {
-        //        Id = s.Id,
-        //        Name = s.Name,
-        //        Description = s.Description,
-        //        IsPrimary = s.IsPrimary,
-        //        OnHold = s.OnHold,
-        //        Percentage = s.Percentage,
-        //        TotalSavings = s.Transactions.Sum(t => t.Amount)
-        //    }).ToList();
-
-
-        //    return savingAccounts;
-        //}
-
+        
         public double GetTotalSavings()
         {
-            //var total = GetSavingAccountsWithoutTransactions().Sum(s => s.TotalSavings);
-
-            // GetSavingsAccounts with Transactions
+            // GetSavingsAccounts(true) = Savings with Transactions
             return GetSavingAccounts(true).Sum(s => s.Transactions.Sum(t => t.Amount));
         }
 
@@ -49,8 +28,6 @@ namespace MoneySmart.API.Services
             {
                 return _context.SavingAccounts.Include(a => a.Transactions).Where(a => a.Id == accountId).FirstOrDefault();
             }
-
-            //var savingAccount = _context.SavingAccounts.FirstOrDefault(s => s.Id == accountId);
 
             return _context.SavingAccounts.Where(a => a.Id == accountId).FirstOrDefault();
         }
@@ -64,6 +41,11 @@ namespace MoneySmart.API.Services
             }
 
             return _context.SavingAccounts.OrderBy(a => a.Name).ToList();
+        }
+
+        public bool Save()
+        {
+            return _context.SaveChanges() >= 0;
         }
 
     }
