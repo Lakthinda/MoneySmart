@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MoneySmart.API.Entities;
+using MoneySmart.API.Models;
 using MoneySmart.API.Services;
+using System.Linq;
 
 namespace MoneySmart
 {
@@ -53,14 +52,47 @@ namespace MoneySmart
                 app.UseExceptionHandler();
             }
 
+            //Automapper Config
+            AutoMapper.Mapper.Initialize(cfg =>
+            {
+                //cfg.CreateMap<SavingAccount, SavingAccountDto>()
+                //   .ForMember(dest => dest.TotalSavings,
+                //              src => src.MapFrom(new SavingsAccountCustomResolver())
+                //             );
+
+                cfg.CreateMap<SavingAccount, SavingAccountDto>()
+                        .ForMember(dest => dest.TotalSavings,
+                            s => s.MapFrom(source => source.Transactions.Sum(t => t.Amount)));
+                cfg.CreateMap<SavingAccount, SavingAccountWithoutTransactionsDto>()
+                        .ForMember(dest => dest.TotalSavings,
+                            s => s.MapFrom(source => source.Transactions.Sum(t => t.Amount)));
+                cfg.CreateMap<Transaction, TransactionDto>();
+            });
+
             app.UseStatusCodePages();
 
             app.UseMvc();
 
-            //app.Run(async (context) =>
-            //{
-            //    await context.Response.WriteAsync("Hello World!");
-            //});
+            app.Run(async (context) =>
+            {
+                await context.Response.WriteAsync("Welcome to MoneySmart App..!");
+            });
         }
     }
+
+    #region AutoMapper Custom value Resolver
+    public interface IValueResolver<in TSource, in TDestination, TDestMember>
+    {
+        TDestMember Resolve(TSource source, TDestination destination, TDestMember destMember, ResolutionContext context);
+    }
+
+    public class SavingsAccountCustomResolver : IValueResolver<SavingAccount, object, double>
+    {
+        public double Resolve(SavingAccount source, object destination, double destMember, ResolutionContext context)
+        {
+            return source.Transactions.Sum(t => t.Amount);
+        }
+    }
+
+    #endregion
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using MoneySmart.API.Entities;
 using MoneySmart.API.Models;
 using MoneySmart.API.Services;
@@ -23,22 +24,24 @@ namespace MoneySmart.API.Controllers
         {
             List<SavingAccount> savingAccountList = _repository.GetSavingAccounts(true); //true = with transaction details
 
-            List<SavingAccountWithoutTransactionsDto> savingAccountWithoutTransactionsDtoList = new List<SavingAccountWithoutTransactionsDto>();
-            foreach(var account in savingAccountList)
-            {
-                savingAccountWithoutTransactionsDtoList.Add(new SavingAccountWithoutTransactionsDto()
-                {
-                    Id = account.Id,
-                    Name = account.Name,
-                    Description = account.Description,
-                    IsPrimary = account.IsPrimary,
-                    OnHold = account.OnHold,
-                    Percentage = account.Percentage,
-                    TotalSavings = account.Transactions.Sum(t => t.Amount)
-                });
-            }
+            //List<SavingAccountWithoutTransactionsDto> savingAccountWithoutTransactionsDtoList = new List<SavingAccountWithoutTransactionsDto>();
+            //foreach(var account in savingAccountList)
+            //{
+            //    savingAccountWithoutTransactionsDtoList.Add(new SavingAccountWithoutTransactionsDto()
+            //    {
+            //        Id = account.Id,
+            //        Name = account.Name,
+            //        Description = account.Description,
+            //        IsPrimary = account.IsPrimary,
+            //        OnHold = account.OnHold,
+            //        Percentage = account.Percentage,
+            //        TotalSavings = account.Transactions.Sum(t => t.Amount)
+            //    });
+            //}
 
-            return Ok(savingAccountWithoutTransactionsDtoList);
+            var result = Mapper.Map<IEnumerable<SavingAccountWithoutTransactionsDto>>(savingAccountList);
+
+            return Ok(result);
         }
         
         [HttpGet("{accountId}")]
@@ -46,26 +49,29 @@ namespace MoneySmart.API.Controllers
         {
             SavingAccount savingAccount = _repository.GetSavingAccount(accountId, true);// true = with Transaction details
 
-            SavingAccountDto savingAccountDto = new SavingAccountDto()
-            {
-                Id = savingAccount.Id,
-                Name = savingAccount.Name,
-                Description = savingAccount.Description,
-                IsPrimary = savingAccount.IsPrimary,
-                OnHold = savingAccount.OnHold,
-                Percentage = savingAccount.Percentage,
-                Transactions = savingAccount.Transactions.Select(a => new TransactionDto()
-                {
-                    Id = a.Id,
-                    Amount = a.Amount,
-                    CreatedDateTime = a.CreatedDateTime,
-                    OriginalAmount = a.OriginalAmount,
-                    TransactionType = a.TransactionType
-                }).ToList()
+            //SavingAccountDto savingAccountDto = new SavingAccountDto()
+            //{
+            //    Id = savingAccount.Id,
+            //    Name = savingAccount.Name,
+            //    Description = savingAccount.Description,
+            //    IsPrimary = savingAccount.IsPrimary,
+            //    OnHold = savingAccount.OnHold,
+            //    Percentage = savingAccount.Percentage,
+            //    TotalSavings = savingAccount.Transactions.Sum(t => t.Amount),
+            //    Transactions = savingAccount.Transactions.Select(a => new TransactionDto()
+            //    {
+            //        Id = a.Id,
+            //        Amount = a.Amount,
+            //        CreatedDateTime = a.CreatedDateTime,
+            //        OriginalAmount = a.OriginalAmount,
+            //        TransactionType = a.TransactionType
+            //    }).ToList()
 
-            };
+            //};
 
-            return Ok(savingAccountDto);
+            var result = Mapper.Map<SavingAccountDto>(savingAccount);
+
+            return Ok(result);
         }
 
         [HttpGet("total")]
