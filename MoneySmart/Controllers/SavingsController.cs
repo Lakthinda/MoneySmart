@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MoneySmart.API.Entities;
 using MoneySmart.API.Models;
 using MoneySmart.API.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MoneySmart.API.Controllers
 {
@@ -19,8 +21,51 @@ namespace MoneySmart.API.Controllers
         [HttpGet()]
         public IActionResult GetSavingAccounts()
         {
-            var result = _repository.GetSavingAccountsWithoutTransactions();
-            return Ok(result);
+            List<SavingAccount> savingAccountList = _repository.GetSavingAccounts(true); //true = with transaction details
+
+            List<SavingAccountWithoutTransactionsDto> savingAccountWithoutTransactionsDtoList = new List<SavingAccountWithoutTransactionsDto>();
+            foreach(var account in savingAccountList)
+            {
+                savingAccountWithoutTransactionsDtoList.Add(new SavingAccountWithoutTransactionsDto()
+                {
+                    Id = account.Id,
+                    Name = account.Name,
+                    Description = account.Description,
+                    IsPrimary = account.IsPrimary,
+                    OnHold = account.OnHold,
+                    Percentage = account.Percentage,
+                    TotalSavings = account.Transactions.Sum(t => t.Amount)
+                });
+            }
+
+            return Ok(savingAccountWithoutTransactionsDtoList);
+        }
+        
+        [HttpGet("{accountId}")]
+        public IActionResult GetSavingAccount(int accountId)
+        {
+            SavingAccount savingAccount = _repository.GetSavingAccount(accountId, true);// true = with Transaction details
+
+            SavingAccountDto savingAccountDto = new SavingAccountDto()
+            {
+                Id = savingAccount.Id,
+                Name = savingAccount.Name,
+                Description = savingAccount.Description,
+                IsPrimary = savingAccount.IsPrimary,
+                OnHold = savingAccount.OnHold,
+                Percentage = savingAccount.Percentage,
+                Transactions = savingAccount.Transactions.Select(a => new TransactionDto()
+                {
+                    Id = a.Id,
+                    Amount = a.Amount,
+                    CreatedDateTime = a.CreatedDateTime,
+                    OriginalAmount = a.OriginalAmount,
+                    TransactionType = a.TransactionType
+                }).ToList()
+
+            };
+
+            return Ok(savingAccountDto);
         }
 
         [HttpGet("total")]
@@ -30,17 +75,10 @@ namespace MoneySmart.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{accountId}")]
-        public IActionResult GetSavingAccount(int accountId)
-        {
-            var result = _repository.GetSavingAccount(accountId);
-            return Ok(result);
-        }        
-
         [HttpPost("{funds}")]
         public IActionResult AddFunds(double funds)
         {            
-            var savingAccounts = _repository.GetSavingAccounts();
+            //var savingAccounts = _repository.GetSavingAccounts();
 
             //foreach (var account in savingAccounts)
             //{                
@@ -53,7 +91,7 @@ namespace MoneySmart.API.Controllers
             //    });
             //}
 
-            return Ok(savingAccounts);
+            return Ok();
         }
     }
 }

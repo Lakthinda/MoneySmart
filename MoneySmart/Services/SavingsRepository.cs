@@ -1,4 +1,5 @@
-﻿using MoneySmart.API.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using MoneySmart.API.Entities;
 using MoneySmart.API.Models;
 using System;
 using System.Collections.Generic;
@@ -17,43 +18,52 @@ namespace MoneySmart.API.Services
             _context = context;            
         }
 
-        public List<SavingAccountWithoutTransactionsDto> GetSavingAccountsWithoutTransactions()
-        {
-            var savingAccounts = _context.SavingAccounts.Select(s => new SavingAccountWithoutTransactionsDto()
-            {
-                Id = s.Id,
-                Name = s.Name,
-                Description = s.Description,
-                IsPrimary = s.IsPrimary,
-                OnHold = s.OnHold,
-                Percentage = s.Percentage,
-                TotalSavings = s.Transactions.Sum(t => t.Amount)
-            }).ToList();
+        //public List<SavingAccountWithoutTransactionsDto> GetSavingAccountsWithoutTransactions()
+        //{
+        //    var savingAccounts = _context.SavingAccounts.Select(s => new SavingAccountWithoutTransactionsDto()
+        //    {
+        //        Id = s.Id,
+        //        Name = s.Name,
+        //        Description = s.Description,
+        //        IsPrimary = s.IsPrimary,
+        //        OnHold = s.OnHold,
+        //        Percentage = s.Percentage,
+        //        TotalSavings = s.Transactions.Sum(t => t.Amount)
+        //    }).ToList();
 
 
-            return savingAccounts;
-        }
+        //    return savingAccounts;
+        //}
 
         public double GetTotalSavings()
         {
             //var total = GetSavingAccountsWithoutTransactions().Sum(s => s.TotalSavings);
 
-            var total = 0;
-            return total;
+            // GetSavingsAccounts with Transactions
+            return GetSavingAccounts(true).Sum(s => s.Transactions.Sum(t => t.Amount));
         }
 
-        public SavingAccount GetSavingAccount(int accountId)
+        public SavingAccount GetSavingAccount(int accountId, bool includeTransactions)
         {
-            var savingAccount = _context.SavingAccounts.FirstOrDefault(s => s.Id == accountId);
+            if (includeTransactions)
+            {
+                return _context.SavingAccounts.Include(a => a.Transactions).Where(a => a.Id == accountId).FirstOrDefault();
+            }
 
-            return savingAccount;
+            //var savingAccount = _context.SavingAccounts.FirstOrDefault(s => s.Id == accountId);
+
+            return _context.SavingAccounts.Where(a => a.Id == accountId).FirstOrDefault();
         }
 
-        public List<SavingAccount> GetSavingAccounts()
+        public List<SavingAccount> GetSavingAccounts(bool includeTransactions)
         {
-            var savingAccounts = _context.SavingAccounts.ToList();
 
-            return savingAccounts;
+            if (includeTransactions)
+            {
+                return _context.SavingAccounts.Include(a => a.Transactions).OrderBy(a => a.Name).ToList();
+            }
+
+            return _context.SavingAccounts.OrderBy(a => a.Name).ToList();
         }
 
     }

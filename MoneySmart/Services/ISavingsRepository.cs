@@ -8,11 +8,10 @@ using System.Threading.Tasks;
 namespace MoneySmart.API.Services
 {
     public interface ISavingsRepository
-    {
-        List<SavingAccountWithoutTransactionsDto> GetSavingAccountsWithoutTransactions();
+    {        
         double GetTotalSavings();
-        SavingAccount GetSavingAccount(int accountId);
-        List<SavingAccount> GetSavingAccounts();
+        SavingAccount GetSavingAccount(int accountId,bool includeTransactions);
+        List<SavingAccount> GetSavingAccounts(bool includeTransactions);
 
 
     }

@@ -15,8 +15,8 @@ namespace MoneySmart.API.Entities
         public int TransactionType { get; set; } // 0 - split, 1- Ad-hoc
         public DateTime CreatedDateTime { get; set; }
         public double OriginalAmount { get; set; }
-        [ForeignKey("SavingAcountId")]
+        [ForeignKey("SavingAccountId")]
         public SavingAccount SavingAccount { get; set; }
-        public int SavingAcountId { get; set; }
+        public int SavingAccountId { get; set; }
     }
 }
