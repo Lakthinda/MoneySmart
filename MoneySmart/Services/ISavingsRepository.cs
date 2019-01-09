@@ -12,7 +12,11 @@ namespace MoneySmart.API.Services
         double GetTotalSavings();
         SavingAccount GetSavingAccount(int accountId,bool includeTransactions);
         List<SavingAccount> GetSavingAccounts(bool includeTransactions);
+        bool Save();
+        bool SavingAccountExits(int accountId);
+        void AddSavingAccount(SavingAccount account);
 
-
+        void RemoveSavingAccount(SavingAccount account);
+        //void AddTransaction
     }
 }

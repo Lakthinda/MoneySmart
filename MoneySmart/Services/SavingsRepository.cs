@@ -48,5 +48,22 @@ namespace MoneySmart.API.Services
             return _context.SaveChanges() >= 0;
         }
 
+        public bool SavingAccountExits(int accountId)
+        {
+            var savingAccount = GetSavingAccount(accountId, false);
+            return savingAccount != null;
+        }
+
+        public void AddSavingAccount(SavingAccount account)
+        {
+            _context.SavingAccounts.Add(account);
+        }
+
+        public void RemoveSavingAccount(SavingAccount account)
+        {
+            _context.SavingAccounts.Remove(account);
+        }
+
+        
     }
 }
