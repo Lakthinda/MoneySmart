@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace MoneySmart.API.Models
 {
@@ -11,7 +12,13 @@ namespace MoneySmart.API.Models
         public bool IsPrimary { get; set; }
         public bool OnHold { get; set; }
 
-        public double TotalSavings { get; set; }
+        public double TotalSavings
+        {
+            get
+            {
+                return Transactions.Sum(t => t.Amount);
+            }
+        }            
         public ICollection<TransactionDto> Transactions { get; set; }
     }
 }

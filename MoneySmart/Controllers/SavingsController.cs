@@ -24,50 +24,20 @@ namespace MoneySmart.API.Controllers
         {
             List<SavingAccount> savingAccountList = _repository.GetSavingAccounts(true); //true = with transaction details
 
-            //List<SavingAccountWithoutTransactionsDto> savingAccountWithoutTransactionsDtoList = new List<SavingAccountWithoutTransactionsDto>();
-            //foreach(var account in savingAccountList)
-            //{
-            //    savingAccountWithoutTransactionsDtoList.Add(new SavingAccountWithoutTransactionsDto()
-            //    {
-            //        Id = account.Id,
-            //        Name = account.Name,
-            //        Description = account.Description,
-            //        IsPrimary = account.IsPrimary,
-            //        OnHold = account.OnHold,
-            //        Percentage = account.Percentage,
-            //        TotalSavings = account.Transactions.Sum(t => t.Amount)
-            //    });
-            //}
-
             var result = Mapper.Map<IEnumerable<SavingAccountWithoutTransactionsDto>>(savingAccountList);
 
             return Ok(result);
         }
         
-        [HttpGet("{accountId}")]
+        [HttpGet("{accountId}",Name = "getSavingAccount")]
         public IActionResult GetSavingAccount(int accountId)
         {
             SavingAccount savingAccount = _repository.GetSavingAccount(accountId, true);// true = with Transaction details
 
-            //SavingAccountDto savingAccountDto = new SavingAccountDto()
-            //{
-            //    Id = savingAccount.Id,
-            //    Name = savingAccount.Name,
-            //    Description = savingAccount.Description,
-            //    IsPrimary = savingAccount.IsPrimary,
-            //    OnHold = savingAccount.OnHold,
-            //    Percentage = savingAccount.Percentage,
-            //    TotalSavings = savingAccount.Transactions.Sum(t => t.Amount),
-            //    Transactions = savingAccount.Transactions.Select(a => new TransactionDto()
-            //    {
-            //        Id = a.Id,
-            //        Amount = a.Amount,
-            //        CreatedDateTime = a.CreatedDateTime,
-            //        OriginalAmount = a.OriginalAmount,
-            //        TransactionType = a.TransactionType
-            //    }).ToList()
-
-            //};
+            if (savingAccount == null)
+            {
+                return NotFound();
+            }
 
             var result = Mapper.Map<SavingAccountDto>(savingAccount);
 
@@ -81,21 +51,43 @@ namespace MoneySmart.API.Controllers
             return Ok(result);
         }
 
+        [HttpPost]
+        public IActionResult CreateSavingAccount([FromBody] SavingAccountCreateDto account)
+        {
+            if(account == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Check if Account already exists
+            List<SavingAccount> savingAccounts = _repository.GetSavingAccounts(false);
+            if(savingAccounts.FirstOrDefault(s => s.Name.Contains(account.Name,StringComparison.OrdinalIgnoreCase)) != null){
+                return BadRequest(new { ErrorMsage = "This Saving Account name already exists." });
+            }
+
+            var accountEntity = Mapper.Map<SavingAccount>(account);
+            _repository.AddSavingAccount(accountEntity);
+
+            if (!_repository.Save())
+            {
+                return StatusCode(500, "A problem happend when creating the account. Please try again.");
+            }
+
+            var createdSavingAccount = Mapper.Map<SavingAccountDto>(accountEntity);
+
+            return CreatedAtRoute("getSavingAccount",
+                                   new { accountId = createdSavingAccount.Id },
+                                   createdSavingAccount);
+        }
+
         [HttpPost("{funds}")]
         public IActionResult AddFunds(double funds)
         {            
-            //var savingAccounts = _repository.GetSavingAccounts();
-
-            //foreach (var account in savingAccounts)
-            //{                
-            //    account.Transactions.Add(new TransactionDto()
-            //    {
-            //        Id= 1201,
-            //        Amount = (account.Percentage/100) * funds,
-            //        TransactionType = 0,
-            //        CreatedDateTime = DateTime.Now
-            //    });
-            //}
 
             return Ok();
         }

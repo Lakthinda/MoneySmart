@@ -55,18 +55,25 @@ namespace MoneySmart
             //Automapper Config
             AutoMapper.Mapper.Initialize(cfg =>
             {
-                //cfg.CreateMap<SavingAccount, SavingAccountDto>()
-                //   .ForMember(dest => dest.TotalSavings,
-                //              src => src.MapFrom(new SavingsAccountCustomResolver())
-                //             );
+                // cfg.CreateMap<SavingAccount, SavingAccountDto>()
+                //.ForMember(dest => dest.TotalSavings,
+                //           src => src.MapFrom(new SavingsAccountCustomResolver())
+                //          );
 
-                cfg.CreateMap<SavingAccount, SavingAccountDto>()
-                        .ForMember(dest => dest.TotalSavings,
-                            s => s.MapFrom(source => source.Transactions.Sum(t => t.Amount)));
-                cfg.CreateMap<SavingAccount, SavingAccountWithoutTransactionsDto>()
-                        .ForMember(dest => dest.TotalSavings,
-                            s => s.MapFrom(source => source.Transactions.Sum(t => t.Amount)));
+
+                //cfg.CreateMap<SavingAccount, SavingAccountDto>()
+                //         .ForMember(dest => dest.TotalSavings,
+                //             s => s.MapFrom(source => source.Transactions.Sum(t => t.Amount)));
+                // cfg.CreateMap<SavingAccount, SavingAccountWithoutTransactionsDto>()
+                //         .ForMember(dest => dest.TotalSavings,
+                //             s => s.MapFrom(source => source.Transactions.Sum(t => t.Amount)));
+
+                cfg.CreateMap<SavingAccount, SavingAccountDto>();
+                cfg.CreateMap<SavingAccount, SavingAccountWithoutTransactionsDto>();
+
                 cfg.CreateMap<Transaction, TransactionDto>();
+                cfg.CreateMap<SavingAccountCreateDto, SavingAccount>();
+                
             });
 
             app.UseStatusCodePages();
@@ -80,19 +87,15 @@ namespace MoneySmart
         }
     }
 
-    #region AutoMapper Custom value Resolver
-    public interface IValueResolver<in TSource, in TDestination, TDestMember>
-    {
-        TDestMember Resolve(TSource source, TDestination destination, TDestMember destMember, ResolutionContext context);
-    }
+    #region AutoMapper Custom value Resolver 
 
-    public class SavingsAccountCustomResolver : IValueResolver<SavingAccount, object, double>
-    {
-        public double Resolve(SavingAccount source, object destination, double destMember, ResolutionContext context)
-        {
-            return source.Transactions.Sum(t => t.Amount);
-        }
-    }
-
+    //public class SavingsAccountCustomResolver : IValueResolver<SavingAccount, object, double>
+    //{
+    //    public double Resolve(SavingAccount source, object destination, double destMember, ResolutionContext context)
+    //    {
+    //        return source.Transactions.Sum(t => t.Amount);
+    //    }
+    //}
+    
     #endregion
 }
