@@ -85,6 +85,25 @@ namespace MoneySmart.API.Controllers
                                    createdSavingAccount);
         }
 
+        [HttpDelete("{accountId}")]
+        public IActionResult DeleteSavingAccount(int accountId)
+        {
+            if (!_repository.SavingAccountExits(accountId))
+            {
+                return NotFound();
+            }
+
+            SavingAccount account = _repository.GetSavingAccount(accountId, false);
+            _repository.RemoveSavingAccount(account);
+
+            if (!_repository.Save())
+            {
+                return StatusCode(500, "A problem happend when deleting saving account");
+            }
+
+            return NoContent();
+        }
+
         [HttpPost("{funds}")]
         public IActionResult AddFunds(double funds)
         {            
