@@ -9,6 +9,6 @@ namespace MoneySmart.API.Services
 {
     public interface ISavingsManager
     {
-        IEnumerable<Transaction> CreateTransaction();
+        bool AddFund(double amount, int accountId = 0);
     }
 }

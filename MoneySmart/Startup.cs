@@ -37,7 +37,8 @@ namespace MoneySmart
             var connectionString = Startup.Configuration["connectionStrings:moneySmartConnectionString"];
             services.AddDbContext<MoneySmartDbContext>(o => o.UseSqlServer(connectionString));
 
-            services.AddScoped<ISavingsRepository,SavingsRepository>();            
+            services.AddScoped<ISavingsRepository,SavingsRepository>();
+            services.AddScoped<ISavingsManager, SavingsManagerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,9 +1,6 @@
 ﻿using MoneySmart.API.Entities;
-using MoneySmart.API.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace MoneySmart.API.Services
 {
@@ -17,7 +14,7 @@ namespace MoneySmart.API.Services
         void AddSavingAccount(SavingAccount account);
 
         void RemoveSavingAccount(SavingAccount account);
-      
-        //void AddTransaction
+
+        void AddTransactions(List<Transaction> transactions);
     }
 }

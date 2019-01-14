@@ -14,9 +14,11 @@ namespace MoneySmart.API.Controllers
     {
 
         private ISavingsRepository _repository;
-        public SavingsController(ISavingsRepository repository)
+        private ISavingsManager _savingManager;
+        public SavingsController(ISavingsRepository repository, ISavingsManager savingManager)
         {
             _repository = repository;
+            _savingManager = savingManager;
         }
 
         [HttpGet()]
@@ -52,7 +54,8 @@ namespace MoneySmart.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateSavingAccount([FromBody] SavingAccountCreateDto account)
+        public IActionResult CreateSavingAccount(
+                                                    [FromBody] SavingAccountCreateDto account)
         {
             if(account == null)
             {
@@ -104,11 +107,46 @@ namespace MoneySmart.API.Controllers
             return NoContent();
         }
 
-        [HttpPost("{funds}")]
-        public IActionResult AddFunds(double funds)
-        {            
+        [HttpPost(Name = "addfunds")]
+        public IActionResult AddFunds(
+                                        [FromBody] TransactionCreateDto transaction)
+        {
+            if (transaction == null)
+            {
+                return BadRequest();
+            }
 
-            return Ok();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (transaction.SavingAccountId != 0 && !_repository.SavingAccountExits(transaction.SavingAccountId))
+            {
+                return NotFound();
+            }
+
+            bool status = false;
+            if(transaction.SavingAccountId != 0)
+            {
+                // AdHoc Transaction, add funds to Saving account
+                status = _savingManager.AddFund(transaction.Amount, transaction.SavingAccountId);                                
+            }
+            else
+            {
+                status = _savingManager.AddFund(transaction.Amount);
+
+            }
+
+            if (!status)
+            {
+                return StatusCode(500, "A problem happend when adding funds. Please try again.");
+            }
+            else
+            {
+                return NoContent();
+            }
+
         }
     }
 }

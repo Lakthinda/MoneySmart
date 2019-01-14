@@ -63,7 +63,10 @@ namespace MoneySmart.API.Services
         {
             _context.SavingAccounts.Remove(account);
         }
-
-        
+                
+        public void AddTransactions(List<Transaction> transactions)
+        {
+            _context.Transactions.AddRange(transactions);
+        }
     }
 }
