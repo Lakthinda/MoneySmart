@@ -107,7 +107,7 @@ namespace MoneySmart.API.Controllers
             return NoContent();
         }
 
-        [HttpPost(Name = "addfunds")]
+        [HttpPost("transactions/")]
         public IActionResult AddFunds(
                                         [FromBody] TransactionCreateDto transaction)
         {

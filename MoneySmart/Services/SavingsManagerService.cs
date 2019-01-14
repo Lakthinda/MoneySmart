@@ -58,7 +58,7 @@ namespace MoneySmart.API.Services
                     {
                         transactionList.Add(new Transaction()
                         {
-                            Amount = amount * account.Percentage,
+                            Amount = amount * (account.Percentage/100),
                             OriginalAmount = amount,
                             SavingAccount = account,
                             SavingAccountId = account.Id,
