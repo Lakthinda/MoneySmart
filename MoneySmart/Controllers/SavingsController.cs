@@ -125,20 +125,19 @@ namespace MoneySmart.API.Controllers
             {
                 return NotFound();
             }
-
-            bool status = false;
+                        
             if(transaction.SavingAccountId != 0)
             {
                 // AdHoc Transaction, add funds to Saving account
-                status = _savingManager.AddFund(transaction.Amount, transaction.SavingAccountId);                                
+                _repository.AddFund(transaction.Amount, transaction.SavingAccountId);                                
             }
             else
             {
-                status = _savingManager.AddFund(transaction.Amount);
+                _repository.AddFund(transaction.Amount);
 
             }
 
-            if (!status)
+            if (!_repository.Save())
             {
                 return StatusCode(500, "A problem happend when adding funds. Please try again.");
             }
