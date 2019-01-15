@@ -16,6 +16,6 @@ namespace MoneySmart.API.Services
         void RemoveSavingAccount(SavingAccount account);
 
         void AddTransactions(List<Transaction> transactions);
-        bool AddFund(double amount, int accountId = 0);
+        void AddFund(double amount, int accountId = 0);
     }
 }

@@ -14,11 +14,10 @@ namespace MoneySmart.API.Controllers
     {
 
         private ISavingsRepository _repository;
-        private ISavingsManager _savingManager;
-        public SavingsController(ISavingsRepository repository, ISavingsManager savingManager)
+        
+        public SavingsController(ISavingsRepository repository)
         {
-            _repository = repository;
-            _savingManager = savingManager;
+            _repository = repository;            
         }
 
         [HttpGet()]
