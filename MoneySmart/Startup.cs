@@ -70,10 +70,12 @@ namespace MoneySmart
 
                 cfg.CreateMap<SavingAccount, SavingAccountDto>();
                 cfg.CreateMap<SavingAccount, SavingAccountWithoutTransactionsDto>();
-
+                cfg.CreateMap<SavingAccount, SavingAccountUpdateDto>();
                 cfg.CreateMap<Transaction, TransactionDto>();
+
                 cfg.CreateMap<SavingAccountCreateDto, SavingAccount>();
-                
+                cfg.CreateMap<SavingAccountUpdateDto, SavingAccount>();
+
             });
 
             app.UseStatusCodePages();

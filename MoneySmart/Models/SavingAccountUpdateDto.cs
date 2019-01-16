@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
+﻿
 namespace MoneySmart.API.Models
 {
-    public class SavingAccountCreateDto
-    {
-        [Required(ErrorMessage = " This is required.")]
+    public class SavingAccountUpdateDto
+    {   
         public string Name { get; set; }
         public string Description { get; set; }
         public double Percentage { get; set; }

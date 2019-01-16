@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MoneySmart.API.Entities;
 using MoneySmart.API.Models;
@@ -145,6 +146,54 @@ namespace MoneySmart.API.Controllers
                 return NoContent();
             }
 
+        }
+
+        [HttpPatch("{accountId}")]
+        public IActionResult PartiallyUpdateSavingAccount(int accountId,
+                                                          [FromBody] JsonPatchDocument<SavingAccountUpdateDto> patchDoc) 
+        {
+            if(patchDoc == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!_repository.SavingAccountExits(accountId))
+            {
+                return NotFound();
+            }
+
+            SavingAccount account = _repository.GetSavingAccount(accountId, false);
+            if(account == null)
+            {
+                return BadRequest(new { ErrorMessage = "This Saving account does not exists" });
+            }
+
+            SavingAccountUpdateDto savingAccountToPatch = Mapper.Map<SavingAccountUpdateDto>(account);
+            // Apply Patch
+            patchDoc.ApplyTo(savingAccountToPatch, ModelState);
+            // Validate Patch
+            TryValidateModel(savingAccountToPatch);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+
+            // Map to SavingAccount Entity
+            Mapper.Map(savingAccountToPatch, account);
+
+            if (!_repository.Save())
+            {
+                return StatusCode(500, "A Problem happened when patch updating the saving account, please try again");
+            }
+
+            return NoContent() ;
         }
     }
 }
