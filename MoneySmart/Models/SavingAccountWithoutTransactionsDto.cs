@@ -9,8 +9,6 @@ namespace MoneySmart.API.Models
         public string Description { get; set; }
         public double Percentage { get; set; }
         public bool IsPrimary { get; set; }
-        public bool OnHold { get; set; }       
-        
-        public double TotalSavings { get; set; }
+        public bool OnHold { get; set; }
     }
 }

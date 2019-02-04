@@ -24,11 +24,12 @@ namespace MoneySmart.API.Controllers
         [HttpGet()]
         public IActionResult GetSavingAccounts()
         {
+            
             List<SavingAccount> savingAccountList = _repository.GetSavingAccounts(true); //true = with transaction details
-
-            var result = Mapper.Map<IEnumerable<SavingAccountWithoutTransactionsDto>>(savingAccountList);
-
-            return Ok(result);
+                        
+            
+            var result =  Mapper.Map<IEnumerable<SavingAccountDto>>(savingAccountList);
+            return Ok(result);                        
         }
         
         [HttpGet("{accountId}",Name = "getSavingAccount")]
