@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MoneySmart.API.Entities;
@@ -10,6 +11,7 @@ using System.Linq;
 
 namespace MoneySmart.API.Controllers
 {
+    [EnableCors("AllowMyOrigin")]
     [Route("api/savings")]
     public class SavingsController : Controller
     {

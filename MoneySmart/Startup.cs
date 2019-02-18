@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -33,11 +35,27 @@ namespace MoneySmart
             services.AddMvc()
                     .AddMvcOptions(o => o.OutputFormatters.Add(
                             new XmlDataContractSerializerOutputFormatter()));
-
+                    //.AddMvcOptions(o => o.Filters.Add(
+                    //        new CorsAuthorizationFilterFactory("AllowMyOrigin")
+                    //    ));
+            
             var connectionString = Startup.Configuration["connectionStrings:moneySmartConnectionString"];
             services.AddDbContext<MoneySmartDbContext>(o => o.UseSqlServer(connectionString));
 
-            services.AddScoped<ISavingsRepository,SavingsRepository>();            
+            services.AddScoped<ISavingsRepository,SavingsRepository>();
+
+            // Add Cors
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowMyOrigin",
+                    builder => builder.WithOrigins("http://localhost:8080/"));
+            });
+
+
+            //services.Configure<MvcOptions>(options =>
+            //{
+            //    options.Filters.Add(new CorsAuthorizationFilterFactory("AllowMyOrigin"));
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,7 +63,7 @@ namespace MoneySmart
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage();                
             }
             else
             {
@@ -77,6 +95,9 @@ namespace MoneySmart
                 cfg.CreateMap<SavingAccountUpdateDto, SavingAccount>();
 
             });
+
+            // Enable cors
+            app.UseCors("AllowMyOrigin");
 
             app.UseStatusCodePages();
 
