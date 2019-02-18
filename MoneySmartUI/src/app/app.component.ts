@@ -6,5 +6,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'Money Smart - your personal fund manager';
+  // title = 'Money Smart - your personal fund manager';
+  title = 'Test One Two Three';
 }
