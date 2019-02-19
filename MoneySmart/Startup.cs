@@ -32,6 +32,16 @@ namespace MoneySmart
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            // Add Cors
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowMyOrigin",
+                    builder => builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader()
+                               .AllowCredentials());
+            });
+
             services.AddMvc()
                     .AddMvcOptions(o => o.OutputFormatters.Add(
                             new XmlDataContractSerializerOutputFormatter()));
@@ -43,13 +53,6 @@ namespace MoneySmart
             services.AddDbContext<MoneySmartDbContext>(o => o.UseSqlServer(connectionString));
 
             services.AddScoped<ISavingsRepository,SavingsRepository>();
-
-            // Add Cors
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowMyOrigin",
-                    builder => builder.WithOrigins("http://localhost:8080/"));
-            });
 
 
             //services.Configure<MvcOptions>(options =>
@@ -96,7 +99,7 @@ namespace MoneySmart
 
             });
 
-            // Enable cors
+            // Asign cors
             app.UseCors("AllowMyOrigin");
 
             app.UseStatusCodePages();
